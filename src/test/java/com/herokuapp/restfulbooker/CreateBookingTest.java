@@ -12,8 +12,7 @@ import org.testng.asserts.SoftAssert;
 
 import static io.restassured.config.HttpClientConfig.httpClientConfig;
 
-
-public class GetBookingTest {
+public class CreateBookingTest {
 
     private static final Logger logger = LogManager.getLogger(GetBookingTest.class);
 
@@ -30,7 +29,7 @@ public class GetBookingTest {
     }
 
     @Test
-    public void getBookingTest() {
+    public void createBooking() {
         try  {
             Response response = RestAssured.get("/1");
             logger.info("Response: " + response.asString());
@@ -38,22 +37,6 @@ public class GetBookingTest {
 
             Assert.assertEquals(response.getStatusCode(), 200, "Status Code should be 200, but it's not");
             Assert.assertNotNull(response.getBody(), "Response body should not be null");
-
-
-            String firstName = response.jsonPath().getString("firstname");
-            String lastName = response.jsonPath().getString("lastname");
-            int price = response.jsonPath().getInt("totalprice");
-            boolean deposit = response.jsonPath().getBoolean("depositpaid");
-            String checkin = response.jsonPath().getString("bookingdates.checkin");
-
-            Assert.assertNotNull(firstName, "First name should not be null");
-            Assert.assertNotNull(lastName, "Last name should not be null");
-            softAssert.assertEquals(firstName, "Mary", "Name is not the expected");
-            softAssert.assertEquals(lastName, "Brown", "Lastname is not the expected");
-            softAssert.assertFalse(deposit,"Deposit should be true, but it is not");
-            softAssert.assertEquals(checkin, "2023-07-22", "checkin date is not correct");
-
-            softAssert.assertAll();
 
 
 
