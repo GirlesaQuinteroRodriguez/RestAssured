@@ -10,10 +10,12 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 
+import java.util.List;
+
 import static io.restassured.config.HttpClientConfig.httpClientConfig;
 
 
-public class GetBookingTest {
+public class GetBookingTest extends BaseTest{
 
     private static final Logger logger = LogManager.getLogger(GetBookingTest.class);
 
@@ -28,6 +30,39 @@ public class GetBookingTest {
                         .setParam("http.socket.timeout", 5000)    // Timeout de socket
                 );
     }
+
+    @Test
+    public void getBookingIdsWithoutFilterTest() {
+        // Get response with booking ids
+        Response response = RestAssured.given(spec).get("/booking");
+        logger.info("Response" + response);
+
+        // Verify response 200
+        Assert.assertEquals(response.getStatusCode(), 200, "Status code should be 200, but it's not");
+
+        // Verify at least 1 booking id in response
+        List<Integer> bookingIds = response.jsonPath().getList("bookingid");
+        Assert.assertFalse(bookingIds.isEmpty(), "List of bookingIds is empty, but it shouldn't be");
+    }
+
+    @Test
+    public void getBookingIdsWithFilterTest() {
+        // adding query parameter to spec
+        spec.queryParam("firstname", "Jim");
+        spec.queryParam("lastname", "Smith");
+
+
+        Response response = RestAssured.given(spec).get("/booking");
+        logger.info("Response" + response);
+
+
+        Assert.assertEquals(response.getStatusCode(), 200, "Status code should be 200, but it's not");
+
+        // Verify at least 1 booking id in response
+        List<Integer> bookingIds = response.jsonPath().getList("bookingid");
+        Assert.assertFalse(bookingIds.isEmpty(), "List of bookingIds is empty, but it shouldn't be");
+    }
+
 
     @Test
     public void getBookingTest() {
